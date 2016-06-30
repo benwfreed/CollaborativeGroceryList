@@ -35,11 +35,12 @@
 	
 	<div id="grocery-list" class="row">
 		<div class="col-sm-4 col-sm-offset-4">
-			<div class="checkbox" ng-repeat="item in items">
-				<label>
-					<input type="checkbox" ng-click="deleteItem(item._id)">{{item.text}}
-				</label>
-			</div>
+			<ul class="list-group" >
+				<li class="list-group-item" ng-repeat="item in items">
+					<h4><span class="glyphicon glyphicon-remove pull-right" ng-click="deleteItem(item._id)"></span>
+					{{item.text}}</h4>
+				</li>
+			</ul>
 		</div>
 	</div>
 	
