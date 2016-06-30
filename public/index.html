@@ -1,0 +1,64 @@
+<!doctype html>
+
+<html ng-app="angTodo">
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	
+	<title>To Do Notes with Angular</title>
+	
+	<link rel="stylesheet" 	href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" 	integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" 	crossorigin="anonymous">
+	
+	<style>
+		html {
+			overflow-y: scroll;
+		}
+		body {
+			padding-top: 50px;
+		}
+		#grocery-list {
+			margin-bottom: 30px;
+		}
+	</style>
+	
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
+	
+	<script src="core.js"></script>
+	
+</head>
+
+<body ng-controller="mainController">
+	{{hello}}
+	{{items.data.length}}
+  <div class="container">
+	<div class="jumbotron text-center">
+		<h1>To Do <span class="label label-info">{{items.length}}</span></h1>
+	</div>
+	
+	<div id="grocery-list" class="row">
+		<div class="col-sm-4 col-sm-offset-4">
+			<div class="checkbox" ng-repeat="item in items">
+				<label>
+					<input type="checkbox" ng-click="deleteItem(item._id)">{{item.text}}
+				</label>
+			</div>
+		</div>
+	</div>
+	
+	<div id="item-form" class="row">
+		<div class="col-sm-8 col-sm-offset-2 text-center">
+			<form>
+				<div class="form-group">
+					<input type="text" class="form-control input-lg text-center" placeholder="apples, bread, milk, etc..." ng-model="formData.text">
+				</div>
+				<button type="submit" class="btn btn-primary" ng-click="createItem()">
+					Add
+				</button>
+			</form>
+		</div>
+	</div>
+  </div>
+</body>
+</html>
+	
+	
