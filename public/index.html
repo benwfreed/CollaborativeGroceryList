@@ -1,6 +1,6 @@
 <!doctype html>
 
-<html ng-app="angTodo">
+<html ng-app="groceries">
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
@@ -28,11 +28,9 @@
 </head>
 
 <body ng-controller="mainController">
-	{{hello}}
-	{{items.data.length}}
   <div class="container">
 	<div class="jumbotron text-center">
-		<h1>To Do <span class="label label-info">{{items.length}}</span></h1>
+		<h1>Grocery List <span class="label label-info">{{items.length}}</span></h1>
 	</div>
 	
 	<div id="grocery-list" class="row">

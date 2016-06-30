@@ -1,7 +1,7 @@
 {
-  "name": "angtodo",
+  "name": "sweetgrocerylist",
   "version": "1.0.0",
-  "description": "A to do app built with Angular",
+  "description": "A grocery list app",
   "main": "server.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"

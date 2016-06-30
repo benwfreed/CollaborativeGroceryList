@@ -1,6 +1,6 @@
-var angTodo = angular.module('angTodo', []);
+var groceries = angular.module('groceries', []);
 
-angTodo.controller('mainController', ['$scope', '$http', function ($scope, $http) {
+groceries.controller('mainController', ['$scope', '$http', function ($scope, $http) {
 	
 	$scope.hello = "Hello from controller";
 	
@@ -29,8 +29,8 @@ angTodo.controller('mainController', ['$scope', '$http', function ($scope, $http
 	
 	$scope.deleteItem = function(id) {
 		$http.delete('/api/item/' + id)
-			.then(function (data) {
-				$scope.items = data;
+			.then(function(data) {
+				$scope.items = data.data;
 				console.log(data);
 			},
 			function(data) {
