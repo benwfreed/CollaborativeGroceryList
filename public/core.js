@@ -8,7 +8,7 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 	
 	var listId = $location.absUrl().split("/")[3];
 	
-	$http.get('/api/list/'+listId)
+	$http.get('https://sweetgrocerylist.herokuapp.com/api/list/'+listId)
 		.then(function(data) {
 			$scope.items = data.data.items;
 			//$scope.stuff = data.data;
