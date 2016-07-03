@@ -1,1 +1,1 @@
-This is to do app built with Angular.
+This is a grocery list app built with Node, Express, Angular, and MongoDB.

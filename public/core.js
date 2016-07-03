@@ -1,25 +1,30 @@
 var groceries = angular.module('groceries', []);
 
-groceries.controller('mainController', ['$scope', '$http', function ($scope, $http) {
+groceries.controller('mainController', ['$scope', '$http', '$location', function ($scope, $http, $location) {
 	
 	$scope.hello = "Hello from controller";
 	
 	$scope.formData = {};
 	
-	$http.get('/api/item')
+	var listId = $location.absUrl().split("/")[3];
+	
+	$http.get('/api/list/'+listId)
 		.then(function(data) {
-			$scope.items = data.data;
-			console.log(data);
+			$scope.items = data.data.items;
+			//$scope.stuff = data.data;
+			console.log(data.data.items);
+			console.log($location.absUrl());
+			console.log($location.absUrl().split("/")[3]);
 		}, 
 		function(data) {
 			console.log('Error: '+data);
 		});
 	
 	$scope.createItem = function() {
-		$http.post('/api/item', $scope.formData)
+		$http.post('/api/list/'+listId, $scope.formData)
 			.then(function(data) {
 				$scope.formData = {};
-				$scope.items = data.data;
+				$scope.items = data.data.items;
 				console.log(data);
 			},
 			function(data) {
@@ -27,14 +32,27 @@ groceries.controller('mainController', ['$scope', '$http', function ($scope, $ht
 			});
 	};
 	
-	$scope.deleteItem = function(id) {
-		$http.delete('/api/item/' + id)
+	$scope.deleteItem = function(text) {
+		$http.delete('/api/item/' + listId +'/' + text)
 			.then(function(data) {
-				$scope.items = data.data;
+				$scope.items = data.data.items;
 				console.log(data);
 			},
 			function(data) {
 				console.log('Error: '+ data);
 			});
 	};
+	
+	$scope.getList = function(id) {
+		$http.get('/api/list/' + id)
+			.then(function(data) {
+				$scope.items = data.data.items;
+			},
+			function(data) {
+				console.log('Error: '+ data);
+			});
+	};
+	
+
+	
 }]);

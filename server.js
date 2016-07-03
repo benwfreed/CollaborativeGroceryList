@@ -22,6 +22,33 @@ var itemSchema = mongoose.Schema({
 
 var Item = mongoose.model('item', itemSchema);
 
+var listSchema = mongoose.Schema({
+	items: [String]
+});
+
+var List = mongoose.model('list', listSchema);
+
+app.get('/new', function(req, res) {
+	List.create({items: ['FirstItem']}, function(err, newlist) {
+		if (err) {
+			res.send(err);
+		} else {
+			res.redirect('/'+newlist._id);
+		}
+	});
+	//res.redirect('/dingleberry');
+});
+/*
+app.get('/', function(req, res) {
+	List.create({items: []}, function(err, newlist) {
+		if (err) {
+			res.send(err);
+		} else {
+			res.redirect('/'+newlist._id);
+		}
+	});
+});
+*/
 
 app.get('/api/item', function(req, res) {
 	Item.find({}, function(err, items) {
@@ -53,27 +80,77 @@ app.post('/api/item', function (req, res) {
 	});
 });
 
-app.delete('/api/item/:item_id', function(req, res) {
-	console.log(req.params.item_id);
-	Item.remove({
-			_id: req.params.item_id
-	}, function(err, item) {
+app.delete('/api/item/:list_id/:text', function(req, res) {
+	console.log(req.params.list_id);
+	console.log(req.params.text);
+	List.findOneAndUpdate({
+			_id: req.params.list_id
+	}, { $pull: {items: req.params.text}}, {new: true}, function(err, list) {
 			if (err) {
 				res.send(err);
 			} else {
-				Item.find({}, function(err, items) {
-					if (err) {
-						res.send(err);
-					} else {
-						res.json(items);
-					}
-				});
+				console.log(list);
+				res.json(list);
 			}
 		});
 });
 
+app.post('/api/list', function(req, res) {
+	List.create({
+		items: ['Hello There Yesh']
+	}, function(err, list) {
+		if (err) {
+			res.send(err);
+		} else {
+			res.send(list);
+		}
+	});
+});
+
+app.get('/api/list/', function(req, res) {
+	List.findOne({}, function(err, list) {
+		if (err) {
+			res.send(err);
+		} else {
+			console.log('coming from '+req.originalUrl);
+			res.send(list);
+		}
+	})
+});
+
+app.get('/api/list/:list_id', function(req, res) {
+	List.findOne({_id: req.params.list_id}, function(err, list) {
+		if (err) {
+			res.send(err);
+		} else {
+			res.json(list);
+		}
+	});
+});
+
+app.post('/api/list/:list_id', function(req, res) {
+	List.findOneAndUpdate({_id: req.params.list_id, items: {$ne: req.body.text}},
+	{$push: {items: req.body.text}}, {new: true},
+	function(err, list) {
+		if (err) {
+			res.send(err);
+		} if (!list) {
+			List.findOne({_id: req.params.list_id}, function(err, originalList) {
+				if (err) {
+					res.send(err);
+				} else {
+					res.json(originalList);
+				}
+			});
+		} else {
+			res.send(list);
+		}
+	})
+});
+
 
 app.get('*', function(req, res) {
+	console.log(req.params);
 	res.sendFile(__dirname + '/public/index.html');
 });
 
