@@ -21,7 +21,7 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 		});
 	
 	$scope.createItem = function() {
-		$http.post('/api/list/'+listId, $scope.formData)
+		$http.post('https://sweetgrocerylist.herokuapp.com/api/list/'+listId, $scope.formData)
 			.then(function(data) {
 				$scope.formData = {};
 				$scope.items = data.data.items;
@@ -33,7 +33,7 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 	};
 	
 	$scope.deleteItem = function(text) {
-		$http.delete('/api/item/' + listId +'/' + text)
+		$http.delete('https://sweetgrocerylist.herokuapp.com/api/item/' + listId +'/' + text)
 			.then(function(data) {
 				$scope.items = data.data.items;
 				console.log(data);
@@ -44,7 +44,7 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 	};
 	
 	$scope.getList = function(id) {
-		$http.get('/api/list/' + id)
+		$http.get('https://sweetgrocerylist.herokuapp.com/api/list/' + id)
 			.then(function(data) {
 				$scope.items = data.data.items;
 			},
