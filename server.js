@@ -148,6 +148,9 @@ app.post('/api/list/:list_id', function(req, res) {
 	})
 });
 
+app.get('/', function(req, res) {
+	res.send('This is the landing page.');
+})
 
 app.get('*', function(req, res) {
 	console.log(req.params);
