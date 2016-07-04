@@ -9,17 +9,21 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 	var listId = $location.absUrl().split("/")[3];
 	$scope.hasList = listId;
 	
-	$http.get('https://sweetgrocerylist.herokuapp.com/api/list/'+listId)
-		.then(function(data) {
-			$scope.items = data.data.items;
-			//$scope.stuff = data.data;
-			console.log(data.data.items);
-			console.log($location.absUrl());
-			console.log($location.absUrl().split("/")[3]);
-		}, 
-		function(data) {
-			console.log('Error: '+data);
-		});
+	if(listId) {
+		$http.get('https://sweetgrocerylist.herokuapp.com/api/list/'+listId)
+			.then(function(data) {
+				$scope.items = data.data.items;
+				//$scope.stuff = data.data;
+				console.log(data.data.items);
+				console.log($location.absUrl());
+				console.log($location.absUrl().split("/")[3]);
+			}, 
+			function(data) {
+				console.log('Error: '+data);
+			});
+	}
+
+	
 	
 	$scope.createItem = function() {
 		$http.post('https://sweetgrocerylist.herokuapp.com/api/list/'+listId, $scope.formData)

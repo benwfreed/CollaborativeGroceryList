@@ -152,11 +152,10 @@ app.get('/', function(req, res) {
 	res.send('This is the landing page.');
 })
 
-app.get('*{24}', function(req, res) {
+app.get('*', function(req, res) {
 	console.log(req.params);
 	res.sendFile(__dirname + '/public/index.html');
 });
-
 
 
 app.listen(process.env.PORT || 5000);
