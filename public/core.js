@@ -1,16 +1,48 @@
 var groceries = angular.module('groceries', []);
 
-groceries.controller('mainController', ['$scope', '$http', '$location', function ($scope, $http, $location) {
-	
-	$scope.hello = "Hello from controller";
+groceries.factory('socket', function ($rootScope) {
+  var socket = io.connect();
+  return {
+    on: function (eventName, callback) {
+      socket.on(eventName, function () {  
+        var args = arguments;
+        $rootScope.$apply(function () {
+          callback.apply(socket, args);
+        });
+      });
+    },
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        var args = arguments;
+        $rootScope.$apply(function () {
+          if (callback) {
+            callback.apply(socket, args);
+          }
+        });
+      });
+    },
+  };
+});
+
+
+groceries.controller('mainController', ['$scope', '$http', '$location', 'socket', function ($scope, $http, $location, socket) {	
 	
 	$scope.formData = {};
 	
 	var listId = $location.absUrl().split("/")[3];
 	$scope.hasList = listId;
 	
+	socket.on('update', function (data) {
+		$http.get('/api/list/'+listId)
+			.then(function(data) {
+				$scope.items = data.data.items;
+			}, function(data) {
+				console.log('Error:' +data);
+			});
+	});
+	
 	if(listId) {
-		$http.get('https://sweetgrocerylist.herokuapp.com/api/list/'+listId)
+		$http.get('/api/list/'+listId)
 			.then(function(data) {
 				$scope.items = data.data.items;
 				//$scope.stuff = data.data;
@@ -26,11 +58,12 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 	
 	
 	$scope.createItem = function() {
-		$http.post('https://sweetgrocerylist.herokuapp.com/api/list/'+listId, $scope.formData)
+		$http.post('/api/list/'+listId, $scope.formData)
 			.then(function(data) {
 				$scope.formData = {};
 				$scope.items = data.data.items;
 				console.log(data);
+				socket.emit('update', {listhas: 'been changed'});
 			},
 			function(data) {
 				console.log('Error: '+data);
@@ -38,10 +71,11 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 	};
 	
 	$scope.deleteItem = function(text) {
-		$http.delete('https://sweetgrocerylist.herokuapp.com/api/item/' + listId +'/' + text)
+		$http.delete('/api/item/' + listId +'/' + text)
 			.then(function(data) {
 				$scope.items = data.data.items;
 				console.log(data);
+				socket.emit('update', {listhas: 'been changed'});
 			},
 			function(data) {
 				console.log('Error: '+ data);
@@ -49,7 +83,7 @@ groceries.controller('mainController', ['$scope', '$http', '$location', function
 	};
 	
 	$scope.getList = function(id) {
-		$http.get('https://sweetgrocerylist.herokuapp.com/api/list/' + id)
+		$http.get('/api/list/' + id)
 			.then(function(data) {
 				$scope.items = data.data.items;
 			},

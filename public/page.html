@@ -4,7 +4,7 @@
 <head>
 	<meta charset="utf-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1">
-	<base href="http://localhost:5000/">
+	
 	
 	<title>Grocery List</title>
 	
@@ -20,20 +20,39 @@
 		#grocery-list {
 			margin-bottom: 30px;
 		}
+		.jumbotron {
+			background-color: rgba(10,128,10,0.5) !important;
+			color: white;
+		}
+		h1 {
+			background: rbga(255, 255, 0, 0.2) !important;
+			border-radius: 25px;
+			padding: 25px;
+		}
+		body {
+			
+			background-image: url("pineapples.jpeg");
+			
+		}
+		#pineapple {
+			background: green;
+		}
 	</style>
 	
 	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.5.7/angular.min.js"></script>
 	
-	<script src="https://sweetgrocerylist.herokuapp.com/core.js"></script>
-	
+	<script src="core.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
 </head>
 
 <body ng-controller="mainController">
+  
   <div class="container">
+	<div id="pineapple">
+	</div>
 	<div class="jumbotron text-center">
 		<h1>Grocery List <span class="label label-info">{{items.length}}</span></h1>
 	</div>
-	{{stuff}}
 	<div id="grocery-list" class="row">
 		<div class="col-sm-4 col-sm-offset-4">
 			<ul class="list-group" >
@@ -51,13 +70,14 @@
 				<div class="form-group">
 					<input type="text" class="form-control input-lg text-center" placeholder="apples, bread, milk, etc..." ng-model="formData.text">
 				</div>
-				<button type="submit" class="btn btn-primary" ng-click="createItem()">
+				<button type="submit" class="btn btn-info" ng-click="createItem()">
 					Add
 				</button>
 			</form>
 		</div>
 	</div>
   </div>
+  
 </body>
 </html>
 	

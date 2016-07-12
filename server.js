@@ -1,8 +1,13 @@
 var express = require('express');
 var app = express();
+var server = require('http').Server(app);
+var io = require('socket.io')(server);
 var mongoose = require('mongoose');
 var morgan = require('morgan');
 var bodyParser = require('body-parser');
+var methodOverride = require('method-override');
+
+
 
 mongoURI = 'mongodb://heroku_mhl9lc6f:nmt4g65blevs8v0d1sbk7hompk@ds023654.mlab.com:23654/heroku_mhl9lc6f';
 
@@ -13,6 +18,8 @@ app.use(morgan('dev'));
 app.use(bodyParser.urlencoded({'extended': 'true'}));
 app.use(bodyParser.json());
 app.use(bodyParser.json({type: 'application/vnd.api+json'}));
+app.use(methodOverride());
+
 
 
 var itemSchema = mongoose.Schema({
@@ -29,17 +36,6 @@ var listSchema = mongoose.Schema({
 var List = mongoose.model('list', listSchema);
 
 app.get('/new', function(req, res) {
-	List.create({items: ['FirstItem']}, function(err, newlist) {
-		if (err) {
-			res.send(err);
-		} else {
-			res.redirect('/'+newlist._id);
-		}
-	});
-	//res.redirect('/dingleberry');
-});
-/*
-app.get('/', function(req, res) {
 	List.create({items: []}, function(err, newlist) {
 		if (err) {
 			res.send(err);
@@ -48,7 +44,6 @@ app.get('/', function(req, res) {
 		}
 	});
 });
-*/
 
 app.get('/api/item', function(req, res) {
 	Item.find({}, function(err, items) {
@@ -129,34 +124,54 @@ app.get('/api/list/:list_id', function(req, res) {
 });
 
 app.post('/api/list/:list_id', function(req, res) {
-	List.findOneAndUpdate({_id: req.params.list_id, items: {$ne: req.body.text}},
-	{$push: {items: req.body.text}}, {new: true},
-	function(err, list) {
-		if (err) {
-			res.send(err);
-		} if (!list) {
-			List.findOne({_id: req.params.list_id}, function(err, originalList) {
-				if (err) {
-					res.send(err);
-				} else {
-					res.json(originalList);
-				}
-			});
-		} else {
-			res.send(list);
-		}
-	})
+	if (req.body.text) {
+		List.findOneAndUpdate({_id: req.params.list_id, items: {$ne: req.body.text}},
+		{$push: {items: req.body.text}}, {new: true},
+		function(err, list) {
+			if (err) {
+				res.send(err);
+			} if (!list) {
+				List.findOne({_id: req.params.list_id}, function(err, originalList) {
+					if (err) {
+						res.send(err);
+					} else {
+						res.json(originalList);
+					}
+				});
+			} else {
+				res.send(list);
+			}
+		});
+	} else {
+		List.findOne({_id: req.params.list_id}, function(err, list) {
+			if (err) {
+				res.send(err);
+			} else {
+				res.send(list);
+			}
+		});
+	}
 });
 
 app.get('/', function(req, res) {
-	res.send('This is the landing page.');
-})
+	res.redirect('/new');
+});
 
 app.get('*', function(req, res) {
 	console.log(req.params);
-	res.sendFile(__dirname + '/public/index.html');
+	res.sendFile(__dirname + '/public/page.html');
+});
+
+io.on('connection', function (socket) {
+  var referUrl = socket.handshake.headers.referer;
+  var path = referUrl.split('/')[3];
+  socket.join(path);
+  console.log(socket);
+  socket.on('update', function (data) {
+	  io.to(path).emit('update', {newlist: data});
+  });
 });
 
 
-app.listen(process.env.PORT || 5000);
+server.listen(5000);
 
